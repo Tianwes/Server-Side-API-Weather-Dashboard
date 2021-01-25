@@ -1,0 +1,10 @@
+.search-div {
+    
+    float: left;
+    display: inline;
+    width: 245px;
+}
+
+.selected-city-card {
+    margin-bottom: 50px;
+}
