@@ -1,5 +1,4 @@
 .search-div {
-    
     float: left;
     display: inline;
     width: 245px;
@@ -7,4 +6,8 @@
 
 .selected-city-card {
     margin-bottom: 50px;
+}
+
+.forecast-cards-row {
+    margin: 0px 0px 0px 385px;
 }

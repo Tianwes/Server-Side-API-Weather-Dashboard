@@ -1,27 +1,40 @@
 $(document).ready(function () {
-    // need to add .click func to btn look at prev class work
     $("#button-addon2").on("click", function () {
 
         var usersInput = $(".form-control").val();
 
-        console.log(usersInput)
+         var newLi = $("<li></li>").addClass("list-group-item");
+         $(".list-group").first().css( "background-color", "blue" )
+        $(newLi).text(usersInput);
+        $(".list-group").prepend(newLi);   
+       
+        // var searchedCitiesBtn = $("<button></button>");
+        // searchedCitiesBtn.text(usersInput);
+        // $(".list-group").prepend(searchedCitiesBtn);
 
+        $(function() {
+            $(".list-group").css('cursor', 'pointer')
+        
+            .click(function() {
+                // get from localStorage 
+                console.log("click")
+            });
+        });
+
+       
+// for each new input create new li el and prepend
         var APIKey = "ddfbe236a05b76a6b3c7b48611dca40b";
         // (Current weather api)
 
         var queryURL = "https://api.openweathermap.org/data/2.5/weather?" +
             "q=" + usersInput + "&appid=" + APIKey;
 
-        // (5 day forecast api)    
-        // var forecastURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + usersInput + "&appid=" + APIKey;
-
-
         // Main City Card 
         $.ajax({
             url: queryURL,
             method: "GET"
         }).then(function (response) {
-            console.log(response);
+            // console.log(response);
 
             var cityName = response.name;
             // var weatherIcon = (response.weather[0].icon);
@@ -37,10 +50,24 @@ $(document).ready(function () {
             $(".chosen-city").text(cityName);
             $(".chosen-city").append(iconImage)
             // $(".current-date").text(currentDate);
-            $("#city-temp").text("Current temp: " + tempF.toFixed(1) + "\xB0");
+            $("#city-temp").text("Current temp: " + tempF.toFixed(1) + " \xB0" + "F");
             $("#humidity").text("Humidity: " + humidity + "%");
             $("#wind").text("Wind-speed: " + wind + " MPH");
+        //    UV Index below second ajax call 
 
+            var cityOBJ = {
+                city: usersInput,
+                temp: tempF,
+                humid: humidity,
+                windSpeed: wind,
+                icon: iconImage,
+
+            }
+            var cityStr = JSON.stringify(cityOBJ)
+            localStorage.setItem("cityInfo", cityStr);
+            console.log(cityStr)
+            var cityParsed = JSON.parse(localStorage.getItem("cityInfo"))
+            console.log(cityParsed)
 
             var cityLat = response.coord.lat;
             var cityLon = response.coord.lon;
@@ -52,6 +79,9 @@ $(document).ready(function () {
                 method: "GET"
             }).then(function (response) {
                 console.log(response);
+                var uvIndex = response.current.uvi;
+                console.log(uvIndex)
+                $("#uv-index").text("UV-Index: " + uvIndex);
                 // for loop/ .each? to go thru days 1-5
                 // 5 day forecast cards - dates
                 var cardOneDate = response.daily[1].dt;
@@ -59,8 +89,8 @@ $(document).ready(function () {
                 var cardThreeDate = response.daily[3].dt;
                 var cardFourDate = response.daily[4].dt;
                 var cardFiveDate = response.daily[5].dt;
-                
-                console.log(cardOneDate)
+
+                // console.log(cardOneDate)
                 // Text for card dates 
                 $(".day-1").text(cardOneDate)
                 $(".day-2").text(cardTwoDate)
@@ -96,11 +126,11 @@ $(document).ready(function () {
                 var cardFourMaxTemp = (response.daily[3].temp.max - 273.15) * 1.80 + 32;
                 var cardFiveMaxTemp = (response.daily[4].temp.max - 273.15) * 1.80 + 32;
 
-                $(".card-1-temp").text(cardOneMaxTemp.toFixed(2) + "\xB0" + "F")
-                $(".card-2-temp").text(cardTwoMaxTemp.toFixed(2) + "\xB0" + "F")
-                $(".card-3-temp").text(cardThreeMaxTemp.toFixed(2) + "\xB0" + "F")
-                $(".card-4-temp").text(cardFourMaxTemp.toFixed(2) + "\xB0" + "F")
-                $(".card-5-temp").text(cardFiveMaxTemp.toFixed(2) + "\xB0" + "F")
+                $(".card-1-temp").text(cardOneMaxTemp.toFixed(2) + " \xB0" + "F")
+                $(".card-2-temp").text(cardTwoMaxTemp.toFixed(2) + " \xB0" + "F")
+                $(".card-3-temp").text(cardThreeMaxTemp.toFixed(2) + " \xB0" + "F")
+                $(".card-4-temp").text(cardFourMaxTemp.toFixed(2) + " \xB0" + "F")
+                $(".card-5-temp").text(cardFiveMaxTemp.toFixed(2) + " \xB0" + "F")
 
                 var cardOneHumidity = response.daily[0].humidity;
                 var cardTwoHumidity = response.daily[1].humidity;
@@ -113,6 +143,8 @@ $(document).ready(function () {
                 $(".card-3-humidity").text("Humidity: " + cardThreeHumidity + "%");
                 $(".card-4-humidity").text("Humidity: " + cardFourHumidity + "%");
                 $(".card-5-humidity").text("Humidity: " + cardFiveHumidity + "%");
+
+                
 
             });
         })
