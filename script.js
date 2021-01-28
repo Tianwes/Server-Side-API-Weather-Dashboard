@@ -1,28 +1,25 @@
 $(document).ready(function () {
     $("#button-addon2").on("click", function () {
-
+        // add enter button keyup func 
         var usersInput = $(".form-control").val();
 
-         var newLi = $("<li></li>").addClass("list-group-item");
-         $(".list-group").first().css( "background-color", "blue" )
+        // for each new input create new li el and prepend
+        var newLi = $('<li>').addClass("list-group-item");
+        $(".list-group").first().css("background-color", "blue")
         $(newLi).text(usersInput);
-        $(".list-group").prepend(newLi);   
-       
-        // var searchedCitiesBtn = $("<button></button>");
-        // searchedCitiesBtn.text(usersInput);
-        // $(".list-group").prepend(searchedCitiesBtn);
+        $(".list-group").prepend(newLi);
 
-        $(function() {
+
+        $(function () {
             $(".list-group").css('cursor', 'pointer')
-        
-            .click(function() {
-                // get from localStorage 
-                console.log("click")
-            });
+
+                .click(function () {
+                    // get from localStorage 
+                    console.log("click")
+                });
         });
 
-       
-// for each new input create new li el and prepend
+
         var APIKey = "ddfbe236a05b76a6b3c7b48611dca40b";
         // (Current weather api)
 
@@ -37,9 +34,12 @@ $(document).ready(function () {
             // console.log(response);
 
             var cityName = response.name;
-            // var weatherIcon = (response.weather[0].icon);
-            // 'utc' timezone or response.dt
-            // var currentDate = utc(year: number, month: number): DateTime;
+            // Luxon current Date
+            // Doesn't change with city
+            // const DateTime = luxon.DateTime;
+            // const dt = DateTime.fromISO(new Date().toISOString());
+            // const currentDate = dt.toLocaleString(DateTime.DATETIME_SHORT);
+
             var tempF = (response.main.temp - 273.15) * 1.80 + 32;
             var humidity = response.main.humidity;
             var wind = response.wind.speed;
@@ -53,7 +53,7 @@ $(document).ready(function () {
             $("#city-temp").text("Current temp: " + tempF.toFixed(1) + " \xB0" + "F");
             $("#humidity").text("Humidity: " + humidity + "%");
             $("#wind").text("Wind-speed: " + wind + " MPH");
-        //    UV Index below second ajax call 
+            //    UV Index is below second ajax call 
 
             var cityOBJ = {
                 city: usersInput,
@@ -63,25 +63,30 @@ $(document).ready(function () {
                 icon: iconImage,
 
             }
+
             var cityStr = JSON.stringify(cityOBJ)
             localStorage.setItem("cityInfo", cityStr);
             console.log(cityStr)
             var cityParsed = JSON.parse(localStorage.getItem("cityInfo"))
             console.log(cityParsed)
 
+            // This works 
+            // $(".chosen-city").text(cityParsed.city)
+
             var cityLat = response.coord.lat;
             var cityLon = response.coord.lon;
 
-            var fiveDayURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIKey;
+            // Five-day forecast API
+           
 
-            $.ajax({
-                url: fiveDayURL,
-                method: "GET"
-            }).then(function (response) {
-                console.log(response);
+                // UV Index 
                 var uvIndex = response.current.uvi;
-                console.log(uvIndex)
                 $("#uv-index").text("UV-Index: " + uvIndex);
+
+                // var fiveDayOBJ = {
+
+                // }
+
                 // for loop/ .each? to go thru days 1-5
                 // 5 day forecast cards - dates
                 var cardOneDate = response.daily[1].dt;
@@ -92,6 +97,7 @@ $(document).ready(function () {
 
                 // console.log(cardOneDate)
                 // Text for card dates 
+                // If I use Luxon, How do I do dates in future? 
                 $(".day-1").text(cardOneDate)
                 $(".day-2").text(cardTwoDate)
                 $(".day-3").text(cardThreeDate)
@@ -144,7 +150,7 @@ $(document).ready(function () {
                 $(".card-4-humidity").text("Humidity: " + cardFourHumidity + "%");
                 $(".card-5-humidity").text("Humidity: " + cardFiveHumidity + "%");
 
-                
+
 
             });
         })
@@ -158,6 +164,17 @@ $(document).ready(function () {
 
     })
 
+
+    function getFiveDayForecast(){
+        var fiveDayURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIKey;
+
+        $.ajax({
+            url: fiveDayURL,
+            method: "GET"
+        }).then(function (response) {
+            console.log(response);
+        })
+    }
 
 });
 

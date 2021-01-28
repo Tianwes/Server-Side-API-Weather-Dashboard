@@ -1,13 +1,19 @@
 .search-div {
     float: left;
-    display: inline;
     width: 245px;
+    position: absolute;
+    margin: 15px 20px 0px 20px;
+    background-color:aliceblue;
+    padding: 20px;
+    padding-bottom: 85px;
+}
+.city-info-div {
+    margin: 20px 0px 0px 300px;
+    position: relative;
+    width: -webkit-fill-available;
 }
 
 .selected-city-card {
-    margin-bottom: 50px;
+    width: 860px;
 }
 
-.forecast-cards-row {
-    margin: 0px 0px 0px 385px;
-}
