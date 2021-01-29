@@ -1,16 +1,62 @@
 $(document).ready(function () {
-    var APIKey = "ddfbe236a05b76a6b3c7b48611dca40b";
     // (Current weather api)
+    var APIKey = "ddfbe236a05b76a6b3c7b48611dca40b";
 
+    $(document).keydown(function(objEvent) {
+        if (objEvent.keyCode == 13) {  //clicked enter
+             $('#button-addon2').click(); //do click
+        }
+    })
 
-    $("#button-addon2").on("click", function () {
+    $("#button-addon2").click(function(e){/*click fn*/})
+
+    $("#button-addon2").on("click", function (event) {
         // add enter button keyup func 
+
         var usersInput = $(".form-control").val();
-        console.log(usersInput);
+        if(!usersInput){
+            return;
+        }else{
+
+        
+        // $('.form-control').val('');
+
         searchWeather(usersInput);
+        // event.preventDefault();
         // call uvIndex function here 
         // call list function here 
+        prependLiItem(usersInput)
+    }
     });
+
+    function prependLiItem(item) {
+        var cityListArr = [];
+        var count = $(".list-group").children().length;
+        if (count >= 4) {
+            cityListArr.push(item)
+            
+        }else{
+            cityListArr.pop(item)
+        }
+        // have to pass in array somewhere ??? 
+        var newCity = $("<li>").addClass("list-group-item").text(item);
+        $(".list-group").prepend(newCity)
+        console.log(cityListArr)
+        // var item = $(".form-control").val();
+        $('.form-control').val('');
+
+
+        // var count = $(".list-group").children().length;
+        // console.log(count)
+
+        // cityListArr.push(item)
+        // console.log(cityListArr)
+
+        //  HAS to be an array - pop the last item in array
+        // what should i do with the aray? push or pop li items?
+        // ul length = 8 ?
+        // while (count > 8)
+    }
 
     function searchWeather(name) {
         console.log(name)
@@ -22,7 +68,8 @@ $(document).ready(function () {
             url: queryURL,
             method: "GET"
         }).then(function (response) {
-            console.log(response);
+            // console.log(response);
+
             var card = $("<div>").addClass("card city-div");
             var cardBody = $("<div>").addClass("card-body");
             var cardTitle = $("<h2>").addClass("card-title").text(response.name);
@@ -34,7 +81,7 @@ $(document).ready(function () {
             // var uvIndex = $("<p>").addClass("wind").text("UV Index: " + response.daily[i].uvi)
             // uvIndex 
 
-            $(".city-info-div").append(card.append(cardBody.append(cardTitle, currentTemp, humidity, windSpeed)))
+            $(".city-info-div").empty().append(card.append(cardBody.append(cardTitle, currentTemp, humidity, windSpeed)))
 
             fiveDayForecast(response.coord.lat, response.coord.lon);
 
@@ -52,14 +99,16 @@ $(document).ready(function () {
             for (var i = 1; i < 6; i++) {
                 console.log(response)
                 var card = $("<div>").addClass("card col-2");
+                var cardBody = $("<div>").addClass("card-body");
                 var cardTitle = $("<h4>").addClass("card-title").text(luxon.DateTime.fromMillis(response.daily[i].dt));
                 var iconArr = response.daily[i].weather[0].icon;
                 var iconApi = ('http://openweathermap.org/img/w/' + iconArr + '.png')
                 var cardIcon = $("<img>").addClass("card-icon").attr("src", iconApi);
                 var cardTemp = $("<p>").addClass("card-temp").text("Temp: " + response.daily[i].temp.max + " \xB0" + "F");
                 var cardHumidity = $("<p>").addClass("card-humid").text("Humidity: " + response.daily[i].humidity + " %");
+                // $(".forecast-cards-row").empty();
+                $(".forecast-cards-row").append(card.append(cardBody, cardTitle, cardIcon, cardTemp, cardHumidity));
 
-                $(".forecast-cards-row").append(card.append(cardTitle, cardIcon, cardTemp, cardHumidity));
 
             }
 
