@@ -17,11 +17,11 @@ $(document).ready(function () {
         } else {
             searchWeather(usersInput);
             prependLiItem(usersInput)
-
+            clearRow();
             // createElements(cityOBJMain);
             // event.preventDefault();
             // cityStorage(usersInput);
-            // clearRow();
+            
         }
     });
 
@@ -48,20 +48,19 @@ $(document).ready(function () {
             url: fiveDayURL,
             method: "GET"
         }).then(function (response) {
-
+            console.log(response)
             // $(".city-info-div").empty().append(card.append(cardBody.append(cardTitle, currentTemp, humidity, windSpeed, uvIndex)))
-            cityOBJMain = {
+            cityOBJMain = [
                 // Main City display 
                 // cityOBJMain[0].whatever 
-                city: cityName,
-                // icon: iconImage,
-                temp: response.current.temp,
-                humid: response.current.humidity,
-                wind: response.current.wind_speed,
-                uvIndex: response.current.uvi
-            };
-            console.log(cityOBJMain.city);
-
+               {city: cityName},
+                {icon: response.current.weather[0].icon},
+                {temp: response.current.temp},
+                {humid: response.current.humidity},
+                {wind: response.current.wind_speed},
+                {uvIndex: response.current.uvi}
+            ];
+            
             for (var i = 1; i < 6; i++) {
                 forecastOBJ = {
                     // Five-day-forecast cards 
@@ -86,22 +85,38 @@ $(document).ready(function () {
     };
 
     function getResponses(cityOBJ, fiveDayOBJ) {
-        // var cityStr = JSON.stringify(cityOBJMain)
-        
-          
+        var mainCityStr = JSON.parse(localStorage.getItem("mainCityInfo"));
+       
+          var city = mainCityStr[0].city;
+          var iconApi = ('http://openweathermap.org/img/w/' + mainCityStr[1].icon + '.png');
+          var cardIcon = $("<img>").addClass("card-icon").attr("src", iconApi);
+          var temp = mainCityStr[2].temp;
+          var humidity = mainCityStr[3].humid;
+          var wind = mainCityStr[4].wind;
+          var UV = mainCityStr[5].uvIndex;
 
         var card = $("<div>").addClass("card city-div");
         var cardBody = $("<div>").addClass("card-body");
-        // var cardTitle = $("<h2>").addClass("card-title");
-        var currentTemp = $("<p>").addClass("card-temp").text(cityOBJ.temp);
-        // var humidity = $("<p>").addClass("humidity");
-        // var windSpeed = $("<p>").addClass("wind");
-        // var uvIndex = $("<p>").addClass("wind");
-        $(".city-info-div").append(card.append(cardBody.append(currentTemp)))
+        var cardTitle = $("<h2>").addClass("card-title").text(city + " Date");
+        var currentTemp = $("<p>").addClass("card-temp").text("Temperature: " + temp + " \xB0" + "F");
+        var humidity = $("<p>").addClass("humidity").text("Humidity: " + humidity + " %");
+        var windSpeed = $("<p>").addClass("wind").text("Wind Speed: " + wind + " MPH");
+        var uvIndex = $("<p>").addClass("wind").text("UV-Index: " + UV);
+        $(".city-info-div").append(card.append(cardBody.append(cardTitle, cardIcon, currentTemp, humidity, windSpeed, uvIndex)))
         // $("#hour-9 .textBox").val(localStorage.getItem("hour-9"));
         // console.log(cityOBJMain[1].temp)
 
-           // Five-day-forecast cards 
+        //    // Five-day-forecast cards 
+        // var forecastStr = JSON.parse(localStorage.getItem("forcastInfo"));
+        // console.log(forecastStr)
+        // // var cardsFutureDates = date 
+        // var cardsIconApi = ('http://openweathermap.org/img/w/' + forecastStr[i].icon + '.png')
+        // var CardsIcon = $("<img>").addClass("card-icon").attr("src", iconApi);
+        // var cardsTemp = forecastStr[i].temp;
+        // var cardsHumidity = forecastStr[i].humid;
+        // var cardsWind = forecastStr[i].wind;
+        // var cardsUV = forecastStr[i].uvIndex;
+
         // var card = $("<div>").addClass("card col-2");
         // var cardBody = $("<div>").addClass("card-body");
         // var cardTitle = $("<h4>").addClass("card-title").text(luxon.DateTime.fromMillis(response.daily[i].dt));
@@ -120,23 +135,13 @@ $(document).ready(function () {
     function prependLiItem(item) {
         var cityListArr = [];
         var count = $(".list-group").children().length;
-        // if (count >= 4) {
-        //     cityListArr.push(item)
-
-        // } else {
-        //     cityListArr.pop(item)
-        // }
         // have to pass in array somewhere ??? 
         var newCity = $("<li>").addClass("list-group-item").text(item);
         $(".list-group").prepend(newCity)
-        
         // var item = $(".form-control").val();
         $('.form-control').val('');
-
-
         // var count = $(".list-group").children().length;
         // cityListArr.push(item)
-
         //  HAS to be an array - pop the last item in array
         // what should i do with the aray? push or pop li items?
         // ul length = 8 ?
@@ -174,9 +179,10 @@ $(document).ready(function () {
     //     $(".forecast-cards-row").append(card.append(cardBody, cardTitle, cardIcon, cardTemp, cardHumidity));
     // }
 
-    // function clearRow() {
-    //     $(".forecast-cards-row").empty();
-    //     var usersInput = $(".form-control").val();
-    // }
+    function clearRow() {
+        $(".city-info-div").empty();
+        $(".forecast-cards-row").empty();
+        var usersInput = $(".form-control").val();
+    }
 
 })
