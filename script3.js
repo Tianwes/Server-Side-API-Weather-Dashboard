@@ -48,8 +48,6 @@ $(document).ready(function () {
             url: fiveDayURL,
             method: "GET"
         }).then(function (response) {
-            console.log(response)
-            // $(".city-info-div").empty().append(card.append(cardBody.append(cardTitle, currentTemp, humidity, windSpeed, uvIndex)))
             cityOBJMain = [
                 // Main City display 
                 // cityOBJMain[0].whatever 
@@ -62,29 +60,39 @@ $(document).ready(function () {
             ];
             
             for (var i = 1; i < 6; i++) {
-                forecastOBJ = {
-                    // Five-day-forecast cards 
-                    // cityOBJMain[1].whatever 
-                    // date: response.daily[i].dt,
-                    icon: response.daily[i].weather[0].icon,
-                    temp: response.daily[i].temp.max,
-                    humid: response.daily[i].humidity,
-                    wind: response.daily[i].wind_speed,
-                    uvIndex: response.daily[i].uvi
-                };
-            };
-            
-            localStorage.setItem("mainCityInfo", JSON.stringify(cityOBJMain));
-            localStorage.setItem("forecastInfo", JSON.stringify(forecastOBJ));
-            getResponses(cityOBJMain, forecastOBJ);
+                // console.log(response)
+                var card = $("<div>").addClass("card col-2");
+                var cardBody = $("<div>").addClass("card-body");
+                var cardTitle = $("<h4>").addClass("card-title").text(luxon.DateTime.fromMillis(response.daily[i].dt));
 
-            // console.log(cityOBJMain)
-            //  console.log(forecastOBJ)
+                var iconArr = response.daily[i].weather[0].icon;
+                var iconApi = ('http://openweathermap.org/img/w/' + iconArr + '.png')
+
+                var cardIcon = $("<img>").addClass("card-icon").attr("src", iconApi);
+                var cardTemp = $("<p>").addClass("card-temp").text("Temp: " + response.daily[i].temp.max + " \xB0" + "F");
+                var cardHumidity = $("<p>").addClass("card-humid").text("Humidity: " + response.daily[i].humidity + " %");
+
+                
+            var getDate = localStorage.getItem("forecastDate");
+            console.log(getDate)
+             $(".forecast-cards-row").append(card.append(cardBody, cardTitle, cardIcon, cardTemp, cardHumidity));   
+
+ }           
+             localStorage.setItem("forecastDate", (cardTitle.text()));
+
+            // console.log(forecastOBJ)
+            localStorage.setItem("mainCityInfo", JSON.stringify(cityOBJMain));
+            // localStorage.setItem("forecastInfo", JSON.stringify(forecastOBJ));
+            getResponses(cityOBJMain);
+
+            console.log(cityOBJMain)
+            
+             
         });
         
     };
 
-    function getResponses(cityOBJ, fiveDayOBJ) {
+    function getResponses(cityOBJ) {
         var mainCityStr = JSON.parse(localStorage.getItem("mainCityInfo"));
        
           var city = mainCityStr[0].city;
@@ -103,31 +111,9 @@ $(document).ready(function () {
         var windSpeed = $("<p>").addClass("wind").text("Wind Speed: " + wind + " MPH");
         var uvIndex = $("<p>").addClass("wind").text("UV-Index: " + UV);
         $(".city-info-div").append(card.append(cardBody.append(cardTitle, cardIcon, currentTemp, humidity, windSpeed, uvIndex)))
-        // $("#hour-9 .textBox").val(localStorage.getItem("hour-9"));
-        // console.log(cityOBJMain[1].temp)
-
-        //    // Five-day-forecast cards 
-        // var forecastStr = JSON.parse(localStorage.getItem("forcastInfo"));
-        // console.log(forecastStr)
-        // // var cardsFutureDates = date 
-        // var cardsIconApi = ('http://openweathermap.org/img/w/' + forecastStr[i].icon + '.png')
-        // var CardsIcon = $("<img>").addClass("card-icon").attr("src", iconApi);
-        // var cardsTemp = forecastStr[i].temp;
-        // var cardsHumidity = forecastStr[i].humid;
-        // var cardsWind = forecastStr[i].wind;
-        // var cardsUV = forecastStr[i].uvIndex;
-
-        // var card = $("<div>").addClass("card col-2");
-        // var cardBody = $("<div>").addClass("card-body");
-        // var cardTitle = $("<h4>").addClass("card-title").text(luxon.DateTime.fromMillis(response.daily[i].dt));
-        // var iconArr = response.daily[i].weather[0].icon;
-        // var iconApi = ('http://openweathermap.org/img/w/' + iconArr + '.png')
-        // var cardIcon = $("<img>").addClass("card-icon").attr("src", iconApi);
-        // var cardTemp = $("<p>").addClass("card-temp").text("Temp: " + response.daily[i].temp.max + " \xB0" + "F");
-        // var cardHumidity = $("<p>").addClass("card-humid").text("Humidity: " + response.daily[i].humidity + " %");
-        // // $(".forecast-cards-row").empty();
-        // $(".forecast-cards-row").append(card.append(cardBody, cardTitle, cardIcon, cardTemp, cardHumidity));
-}
+       
+    
+    }
     
 
     
