@@ -7,6 +7,11 @@
     padding: 20px;
     padding-bottom: 85px;
 }
+
+.list-group-item:hover {
+    background-color: lightblue;
+}
+
 .city-info-div {
     margin: 20px 0px 0px 300px;
     position: relative;
@@ -17,6 +22,9 @@
     width: 860px;
 }
 
-.forecast-cards-row {
+h3 {
     margin-left: 300px;
+}
+.forecast-cards-row {
+    margin-left: 277px;
 }
