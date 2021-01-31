@@ -19,10 +19,6 @@ $(document).ready(function () {
             searchWeather(usersInput);
             prependLiItem(usersInput)
             clearRow();
-            // createElements(cityOBJMain);
-            // event.preventDefault();
-            // cityStorage(usersInput);
-
         }
     });
 
@@ -37,12 +33,13 @@ $(document).ready(function () {
             method: "GET"
         }).then(function (response) {
 
-            // var cityName = localStorage.setItem(response.name);
             fiveDayCards(response.coord.lat, response.coord.lon, response.name);
+
         });
     }
 
     function fiveDayCards(lat, lon, cityName) {
+
         var fiveDayURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&appid=" + APIKey + "&units=imperial";
 
         $.ajax({
@@ -52,7 +49,6 @@ $(document).ready(function () {
             console.log(response)
             cityOBJMain = [
                 // Main City display 
-                // cityOBJMain[0].whatever 
                 { city: cityName },
                 { icon: response.current.weather[0].icon },
                 { temp: response.current.temp },
@@ -94,9 +90,11 @@ $(document).ready(function () {
                 }
 
             ]
+
             localStorage.setItem("fiveDayOBJ", JSON.stringify(fiveDaysOBJ));
 
             for (var i = 1; i < 6; i++) {
+
                 var card = $("<div>").addClass("card col-2 bg-primary ms-4");
                 var cardBody = $("<div>").addClass("card-body w-25");
                 var cardDate = luxon.DateTime.fromObject(response.daily[i].dt).plus({ days: i });
@@ -154,8 +152,7 @@ $(document).ready(function () {
 
     function prependLiItem(item) {
 
-        // const searchedCityarr = [];
-        // have to pass in array somewhere ??? 
+        // const searchedCityarr = []; 
         var newCity = $("<li>").addClass("list-group-item").text(item);
         $('.form-control').val('');
         $(".list-group").prepend(newCity).on("click", function () {
@@ -163,14 +160,10 @@ $(document).ready(function () {
         })
         // var count = $(".list-group").children().length;
         // cityListArr.push(item)
-        //  HAS to be an array - pop the last item in array
-        // what should i do with the aray? push or pop li items?
-        // ul length = 8 ?
-        // while (count > 8)
+        //  HAS to be an array?- pop the last item in array  
     }
 
     function clearRow() {
-        // if(city)
         $(".city-info-div").empty();
         $(".forecast-cards-row").empty();
         var usersInput = $(".form-control").val();
